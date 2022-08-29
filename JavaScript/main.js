@@ -36,15 +36,15 @@ while (entrada != "esc") {
 }*/
 
 function convertir(){
-    var valor = parseInt(document.getElementById("valor").value);
+    var valor = parseFloat(document.getElementById("valor").value);
     var Resultado = 0;
     var Dolar = 138.31;
     var Euro = 138.22;
-    if(document.getElementById("uno").Checked){
+    if(document.getElementById("uno").checked){
         Resultado = valor * Dolar;
         alert("El cambio de Pesos a Dolares es: $" + Resultado)
     }
-    else if (document.getElementById("dos").Checked){
+    else if (document.getElementById("dos").checked){
         Resultado = valor * Euro;
         alert("El cambio de Pesos a Euros es: $" + Resultado)
     }
