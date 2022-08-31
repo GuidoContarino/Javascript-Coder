@@ -1,18 +1,47 @@
 
-function convertir(){
-    var valor = parseFloat(document.getElementById("valor").value);
-    var Resultado = 0;
-    var Dolar = 138.31;
-    var Euro = 138.22;
-    if(document.getElementById("uno").checked){
-        Resultado = valor * Dolar;
-        alert("El cambio de Pesos a Dolares es: $" + Resultado)
-    }
-    else if (document.getElementById("dos").checked){
-        Resultado = valor * Euro;
-        alert("El cambio de Pesos a Euros es: $" + Resultado)
-    }
-    else{
-        alert("Tienes que completar todos los requerimientos")
+let precio, resultado, opcionDePago, opcionValida=0;
+
+const calcular = (precio,opcion) => {
+    resultado = precio*opcion;
+}
+
+precio = parseInt(prompt("Ingrese la cantidad de dolares a convertir en Pesos Argentinos"));
+
+opcionDePago = parseInt(prompt(`Ingresa el tipo de dolar a converir:
+1- Dolar Oficial
+2- Dolar Blue
+3- Dolar Mayorista 
+4- Dolar Turista` 
+));
+
+while(opcionValida===0) {
+    switch(opcionDePago){
+        case 1: {
+            calcular(precio,137);
+            alert(`El cambio de Dolar a Peso en Dolar Oficial es ${resultado} pesos`);
+            opcionValida=1;
+            break;
+        }
+        case 2: {
+            calcular(precio,286);
+            alert(`El cambio de Dolar a Peso en Dolar Blue es ${resultado} pesos`);
+            opcionValida=1;
+            break;
+        }
+        case 3: {
+            calcular(precio,138.53);
+            alert(`El cambio de Dolar a Peso en Dolar Mayorista es ${resultado} pesos`);
+            opcionValida=1;
+            break;
+        }
+        case 4: {
+            calcular(precio,253.75);
+            alert(`El cambio de Dolar a Peso en Dolar Turista es ${resultado} pesos`);
+            opcionValida=1;
+            break;
+        }
+        default: {
+            alert("Opción inválida");
+        }
     }
 }
