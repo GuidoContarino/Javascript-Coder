@@ -1,21 +1,4 @@
-
-let turnosTrabajables = 5;
-let potenciador = 5;
-let potencia = 1.2;
-let valorVenta = 1200;
-let valorTurno = 600;
-
-//Variables no editables
-let ventasTotal = 0;
-let potenciaPorc = (potencia*100) - 100;
-let comisionAdvance = 0;
-let pagoTurnos = 0;
-let pagoFinal = 0;
-
-//Array
-const ventasTotalArray = [];
-
-
+// DOM y eventos entrega
 class venta {
     constructor (turno, producto, cuota) {
         this.turno =  turno;
@@ -24,141 +7,50 @@ class venta {
     }
 }
 
-function pagoTurnos1 (turnosTrabajados, valorTurno){
-    pagoTurnos = turnosTrabajados * valorTurno
+const ventas = [
+    new venta ("1", "GP Classic", "Cuota Pura"),
+    new venta ("2", "GP Advance", "Cuota Pura"), 
+    new venta ("1", "GP Classic",  "50% descuento"), 
+    new venta("2", "GP Classic", "Primer mes bonificado")];
+
+
+
+function crearBotonDetalle () {
+    const botonDetalle = document.createElement("button");
+    botonDetalle.innerText = "Ver detalle";
+    botonDetalle.addEventListener("click", () => {
+        mostrarVentas(ventas);
+    })
+    document.getElementById("bodyDiv").prepend(botonDetalle);
 }
 
-function comisionAdvance1 (ventasTotal, valorVenta) {
-    comisionAdvance = ventasTotal * valorVenta;
-    if (ventasTotal > potenciador){
-        comisionAdvance = comisionAdvance * potencia
-    }
+crearBotonDetalle ();
+
+function mostrarVentas(ventas) {
+    const contenedorVentas = document.getElementById("bodyDiv");
+    contenedorVentas.innerHTML = "";
+
+    ventas.forEach(venta => {
+        divVEntas = document.createElement("div");
+        divVEntas.innerHTML = `
+        <h3> Producto vendido: ${venta.producto} </h3>
+        <ul>
+            <li> Turno de venta: ${venta.turno} </li>
+            <li> Valor cuota: ${venta.cuota} </li>
+        </ul>
+        `
+        contenedorVentas.append(divVEntas);
+    });
+    const botonVolver = document.createElement("button");
+    botonVolver.innerText = "Volver";
+    botonVolver.addEventListener("click", () => {
+        inicio ();
+    })
+    contenedorVentas.prepend(botonVolver)
 }
 
-function pagoFinal1 (pagoTurnos, comisionAdvance){
-    pagoFinal = pagoTurnos + comisionAdvance
-}
-
-function nuevaVenta(){
-    let ventaTurno = parseInt(prompt(`Ingresa el turno en que realizaste tu venta n° ${i}:` ));
-    while (isNaN(ventaTurno) || ventaTurno < 1 || ventaTurno > turnosTrabajados) {
-        ventaTurno = prompt(`Ingresa un numero valido (Recorda que trabajaste ${turnosTrabajados} turnos )`)
-    }
-
-    let ventaProducto = parseInt(prompt ("Ingresa el producto vendido siendo \n 1 - GP Advance \n 2 - GP Classic"));
-    while (isNaN(ventaProducto) || ventaProducto < 1 || ventaProducto > 2) {
-        ventaProducto = parseInt(prompt("Ingresa un numero valido (1 - GP Advance o 2 - GP Classic): "))
-    }
-    if (ventaProducto == "1") {
-        ventaProducto = "GP Advance"
-    }
-    else {
-        ventaProducto = "GP Classic"
-    }
-
-    let VentaCuota = parseInt(prompt("Ingresa el valor de la cuota siendo: \n 1 - Cuota pura \n 2 - 50% descuento \n 3 - Primer mes bonificado"));
-    while (isNaN(VentaCuota) || VentaCuota < 1 || VentaCuota > 3) {
-        VentaCuota = parseInt(prompt("Ingresa un numero valido (1 - Cuota pura 2 - 50% descuento o 3 - Primer mes bonificado): "))
-    }
-    if (VentaCuota == "1") {
-        VentaCuota = "Cuota pura"
-    }
-    else if (VentaCuota == "2"){
-        VentaCuota = "50% descuento"
-    }
-    else {
-        VentaCuota = "Primer mes bonificado"
-    }
-
-    ventaGp = new venta(ventaTurno, ventaProducto, VentaCuota);
-    ventasTotalArray.push(ventaGp);
-}
-
-const primera = [];
-function primeraVenta (turno){
-    const primera1 = ventasTotalArray.find( p => p.turno == turno )
-    primera.push ({turno: primera1.turno});
-}
-
-
-
-let nombreOperador = prompt("Bienvenido/a al calculador de comisiones, te recuerdo las condiciones de contrato para evitar confusiones: 1- Podes trabajar hasta " + turnosTrabajables + " turnos por semana, si trabajaste mas turnos, solo computaremos los primeros " + turnosTrabajables + " para tu paga. 2- Cada dia de trabajo vale " + valorTurno + " pesos, vendas o no  3- Todas las ventas que hagas seran pagadas, en tanto se realicen dentro de los " + turnosTrabajables + " turnos permitidos por semana. 4- Los productos comercializados son 'GP advance' y 'GP Classic', cada venta suma " + valorVenta + " pesos a tu comision. 5- Si superas las " + potenciador + " ventas totales en los turnos trabajados esta semana, tu comision final aumenta un " + potenciaPorc + "% . Ingresa tu nombre para continuar: ")
-
-//Pido al operador que ingrese la cantidad de turnos trabajados
-let turnosTrabajados = parseFloat(prompt("Hola " + nombreOperador + ", espero que hayas tenido una gran semana de ventas, cuantos turnos trabajaste? Recorda que se computan maximo " + turnosTrabajables + ", pueden ser turnos fraccionados"))
-
-//Si ingresa un valor no numerico no le dejamos avanzar
-while (isNaN(turnosTrabajados) || turnosTrabajados < 1) {
-    turnosTrabajados = parseFloat(prompt("Ingresa solo numeros enteros positivos o decimales!, cuantos turnos trabajaste?: "))
-}
-
-//Son maximos 5 turnos que se computan
-if (turnosTrabajados >turnosTrabajables){
-    turnosTrabajados = turnosTrabajables
-}
-
-//Pido al vendedor que ingrese cuantas ventas hizo en total
-ventasTotal = parseInt(prompt(`Ingresa la cantidad total de ventas concretadas en tus ${turnosTrabajados} turnos:`))
-while (isNaN(ventasTotal) || ventasTotal < 1) {
-    ventasTotal = parseInt(prompt(`Ingresa solo numeros enteros positivos! Ingresa la cantidad total de ventas concretadas en tus ${turnosTrabajados} turnos:`))
-}
-
-
-for (i = 1; i <= ventasTotal; i++) {
-    nuevaVenta();
-}
-
-// Se formula el mensaje del detalle de ventas por si se requiere
-let mensajeDetalleVentas= "";
-for (const venta of ventasTotalArray){
-    detalleVenta(venta);}
-function detalleVenta (objeto){
-    mensajeDetalleVentas += (`\n Turno: ${objeto.turno}, Producto: ${objeto.producto},  Cuota: ${objeto.cuota}`);
-}
-
-// Se formula el mensaje del detalle de ventas por turno
-let mensajeDetalleTurno = "";
-function filtroTurno (turno){
-    const filtro = ventasTotalArray.filter( p => p.turno == turno )
-    for (const p of filtro){
-        mensajeDetalleTurno += (`\n Turno: ${p.turno}, Producto: ${p.producto},  Cuota: ${p.cuota}`)
-    }
-
-}
-
-//Menu interactivo para editar variables
-salir = "";
-while (salir != "4"){
-    opcionDetalle = parseInt(prompt("Para continuar ingrese una opcion: \n 1 - Ver detalle de ventas cargadas \n 2 - Ver pago final \n 3 - Ver detalle de ventas de un turno \n 4 - Salir "));
-    while (isNaN(opcionDetalle) || opcionDetalle <= 0 || opcionDetalle > 4) {
-        opcionDetalle = parseInt(prompt("Ingresa un numero valido (1 para ver detalle por turno, 2 para ver pago final , 3 para ver detalle de ventas de un turno o 4 para salir): "))
-    }
-
-    if (opcionDetalle == "1") {
-        let mensaje1 = (`Tus ventas cargados son ${ventasTotalArray.length}: ${mensajeDetalleVentas}`);
-        alert(mensaje1);
-    }
-
-    else if (opcionDetalle == "2") {
-        pagoTurnos1 (turnosTrabajados, valorTurno);
-        comisionAdvance1 (ventasTotal, valorVenta);
-        pagoFinal1 (pagoTurnos, comisionAdvance);
-        alert ("Tus paga final se abonara de la siguiente forma.\n1- Pago por turnos trabajados => " + valorTurno + " * " + turnosTrabajados + " : " + pagoTurnos + " pesos. \n" + "2- Pago por ventas realizadas (si lograste mas de 10 ventas, el potenciador de comision se aplicara automaticamente al resultado) => " + valorVenta + " * "  + ventasTotal + " : " + comisionAdvance + " pesos. \n" + "Paga final => " + pagoFinal + " pesos.");
-    }
-
-    else if (opcionDetalle == "3") {
-        let turnoEleccion = parseInt(prompt("Que turno desea desplegar?: "));
-        while (isNaN(turnoEleccion) || turnoEleccion <= 0 || turnoEleccion > turnosTrabajados) {
-            turnoEleccion = parseInt(prompt(`Ingresa un numero valido, el de uno de tus turnos trabajados`));
-        }
-        filtroTurno(turnoEleccion);
-        let mensaje1 = (`Las ventas realizadas en el turno ${turnoEleccion} son: ${mensajeDetalleTurno}`);
-        alert(mensaje1);
-        mensajeDetalleTurno = "";
-    }
-
-    else  {
-        alert("Gracias por utilizar el calculador de comisiones!");
-        salir = "4";
-    }
+function inicio (){
+    const contenedorVentas = document.getElementById("bodyDiv");
+    contenedorVentas.innerHTML = "";
+    crearBotonDetalle(); 
 }
