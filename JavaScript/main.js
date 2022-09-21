@@ -1,56 +1,81 @@
-// DOM y eventos entrega
-class venta {
-    constructor (turno, producto, cuota) {
-        this.turno =  turno;
-        this.producto = producto;
-        this.cuota = cuota;
+// Segunda Entrega Proyecto Final
+//  Calculador de comisiones
+
+class Venta {
+    constructor (dias, ventas) {
+        this.dias = dias;
+        this.ventas = ventas;
     }
 }
 
-const ventas = [
-    new venta ("1", "GP Classic", "Cuota Pura"),
-    new venta ("2", "GP Advance", "Cuota Pura"), 
-    new venta ("1", "GP Classic",  "50% descuento"), 
-    new venta("2", "GP Classic", "Primer mes bonificado")];
+const ventas = [];
+let nombre = "";
 
+//boton de captura de datos
+const botonCaptura = document.getElementById("botonCaptura");
+botonCaptura.addEventListener("click", () => {capturarVentas ()}  )
 
+//funcion inicial  trae los datos que hay en storage, si no hay datos, muestra mensaje para cargar datos
 
-function crearBotonDetalle () {
-    const botonDetalle = document.createElement("button");
-    botonDetalle.innerText = "Ver detalle";
-    botonDetalle.addEventListener("click", () => {
-        mostrarVentas(ventas);
-    })
-    document.getElementById("bodyDiv").prepend(botonDetalle);
+function pintarInfoInicial () {
+    
+    const divImpresion = document.getElementById("bodyDiv2");
+    const impresionInfo = document.createElement("ul");
+    const ventasJSON = localStorage.getItem('ventas');
+    const ventasStorage = JSON.parse(ventasJSON) || [];
+    const nombreStorage = localStorage.getItem('nombre') || null;
+    divImpresion.innerHTML = ""
+
+    nombreStorage == null ?
+    impresionInfo.innerHTML = "<h3> No hay info previa cargada </h3>"
+    : impresionInfo.innerHTML = `
+    <h2> ${ nombreStorage } tus resultados son: </h2>
+    <li> Dias trabajados: ${ventasStorage[0].dias} </li>
+    <li> Ventas concretadas: ${ventasStorage[0].ventas} </li>
+    ` 
+    divImpresion.append(impresionInfo)
 }
 
-crearBotonDetalle ();
+pintarInfoInicial ()
 
-function mostrarVentas(ventas) {
-    const contenedorVentas = document.getElementById("bodyDiv");
-    contenedorVentas.innerHTML = "";
-
-    ventas.forEach(venta => {
-        divVEntas = document.createElement("div");
-        divVEntas.innerHTML = `
-        <h3> Producto vendido: ${venta.producto} </h3>
-        <ul>
-            <li> Turno de venta: ${venta.turno} </li>
-            <li> Valor cuota: ${venta.cuota} </li>
-        </ul>
-        `
-        contenedorVentas.append(divVEntas);
-    });
-    const botonVolver = document.createElement("button");
-    botonVolver.innerText = "Volver";
-    botonVolver.addEventListener("click", () => {
-        inicio ();
-    })
-    contenedorVentas.prepend(botonVolver)
+//sincronizo la info capturada en el storage
+function sincronizarStorage () {
+    localStorage.setItem('ventas', JSON.stringify(ventas) )
+    localStorage.setItem('nombre', nombre)
 }
 
-function inicio (){
-    const contenedorVentas = document.getElementById("bodyDiv");
-    contenedorVentas.innerHTML = "";
-    crearBotonDetalle(); 
+function leerStorage () {
+    const ventasJSON = localStorage.getItem('ventas');
+    const ventasStorage = JSON.parse(ventasJSON);
+    console.log(ventasStorage);
+}
+
+//capturo la info para plasmarla y a la vez guardarla en storage
+function capturarVentas () {
+    const diasTrabajados = document.getElementById("diasTrabajados").value;
+    const ventasConcretadas = document.getElementById("ventasConcretadas").value;
+    const nombreCapturado = document.getElementById("nombre").value;
+    nombre = nombreCapturado;
+    ventas.length = 0;
+    let venta = new Venta (diasTrabajados, ventasConcretadas);
+    ventas.push(venta);
+    sincronizarStorage ();
+    pintarInfo ();
+    
+}
+
+
+//pinto la info al darle click en actualizar
+function pintarInfo () {
+    const divImpresion = document.getElementById("bodyDiv2");
+    const impresionInfo = document.createElement("ul");
+    const [venta] = ventas;
+    const nombreStorage = localStorage.getItem('nombre');  
+    divImpresion.innerHTML = ""
+    impresionInfo.innerHTML = `
+    <h2> ${ nombre } tus resultados son: </h2>
+    <li> Dias trabajados: ${venta.dias} </li>
+    <li> Ventas concretadas: ${venta.ventas} </li>
+    `
+    divImpresion.append(impresionInfo);
 }
