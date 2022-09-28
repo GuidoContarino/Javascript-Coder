@@ -1,4 +1,3 @@
-// Segunda Entrega Proyecto Final
 //  Calculador de comisiones
 
 class Venta {
@@ -61,6 +60,10 @@ function capturarVentas () {
     ventas.push(venta);
     sincronizarStorage ();
     pintarInfo ();
+    Toastify({
+        text: "Datos actualizados",
+        duration: 2000
+    }).showToast();
     
 }
 
@@ -70,12 +73,11 @@ function pintarInfo () {
     const divImpresion = document.getElementById("bodyDiv2");
     const impresionInfo = document.createElement("ul");
     const [venta] = ventas;
-    const nombreStorage = localStorage.getItem('nombre');  
+    const nombreStorage = localStorage.getItem('nombre');
     divImpresion.innerHTML = ""
     impresionInfo.innerHTML = `
     <h2> ${ nombre } tus resultados son: </h2>
     <li> Dias trabajados: ${venta.dias} </li>
     <li> Ventas concretadas: ${venta.ventas} </li>
     `
-    divImpresion.append(impresionInfo);
 }
