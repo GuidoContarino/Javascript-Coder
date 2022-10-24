@@ -1,0 +1,109 @@
+:root {
+    --color-primario: #d0e3f7;
+    --color-complementario: rgba(250, 224, 177, 0.836);
+    }
+    
+    * {
+        box-sizing: border-box;
+        border: 2px;
+    }
+    
+    .border {
+        border-style:solid;
+    }
+    
+    body {
+        margin: 0;
+        font-family: 'century gothic', sans-serif;
+        background-color: var(--color-primario);
+    }
+    
+    li {
+        list-style: none;
+    }
+    
+    
+    h3 { 
+        font-style: italic;
+        font-size: 20px;
+    }
+    
+    h2 {
+        font-style: italic;
+    }
+    
+    .container-0 {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .container-1 {
+        width: 100%;
+        height: 50%;
+        display:flex;
+        padding: 0px;
+    }
+    
+    
+    
+    .container-1-data {
+        width: 40%;
+        min-height: 100%;
+        height: 100%;
+        text-align:center;
+        padding: 0px;
+    }
+    
+    .container-1-info {
+        width: 60%;
+        height: 100%;
+        background-image: url("../img/escalacomision.png");
+        background-repeat: no-repeat;
+        background-size:contain;
+        background-position: center;
+        background-color: var(--color-complementario);
+    }
+    
+    .container-2 {
+        width: 100%;
+        height: 60%;
+        padding-top: 0px;
+        margin-top: 0px;
+    }
+    
+    .container-2-nombre {
+        background-color:rgba(253, 251, 232, 0.696) ;
+        width: 100%;
+        height: 15%;
+        padding: 01px;
+        text-align: center;
+        vertical-align: top;
+    }
+    
+    .container-2-info {
+        width: 40%;
+        height: 100%;
+        float: left;
+        display:flex;
+        margin: auto;
+        text-align:center;
+        align-items:baseline;
+        justify-content:center;
+        
+    
+    }
+    
+    .container-2-objetivo {
+        width: 60%;
+        height: 100%;
+        float: right;
+        display: flex;
+    }
+    
+    .container-2-objetivo-detalle {
+        background-color :var(--color-complementario) ;
+        width: 50%;
+        height: 100%;
+        text-align: center;
+        padding: 0px;
+    }

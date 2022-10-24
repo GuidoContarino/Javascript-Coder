@@ -1,83 +1,223 @@
-//  Calculador de comisiones
+const datos = []
+let diasVigencia = "";
+const objetivo = [];
 
-class Venta {
-    constructor (dias, ventas) {
-        this.dias = dias;
-        this.ventas = ventas;
+const botonCargarDatos = document.getElementById("cargar");
+botonCargarDatos.addEventListener ("click", () => {cargarDatos ()}  )
+
+const botonBorrarDatos = document.getElementById("BorrarTodo");
+botonBorrarDatos.addEventListener ("click", () => {borrarDatos ()}  )
+
+
+let activarFetch = async()=>{
+    let respuesta = await fetch("./JavaScript/data.json");
+    let respuestaData = await respuesta.json(); 
+}
+activarFetch();
+
+function diasVigenciaFetch (data) {
+    diasVigencia = data[0].diasVigencia;
+}
+
+function objetivoFetch (data) {
+    for (let escala = 1; escala < data.length; escala++) {
+        objetivo.push(data[escala]);
     }
 }
 
-const ventas = [];
-let nombre = "";
-
-//boton de captura de datos
-const botonCaptura = document.getElementById("botonCaptura");
-botonCaptura.addEventListener("click", () => {capturarVentas ()}  )
-
-//funcion inicial  trae los datos que hay en storage, si no hay datos, muestra mensaje para cargar datos
-
-function pintarInfoInicial () {
+function listaVendedores(vend) {
+    const listaId = document.getElementById('vendedor');
+    for (vend of vend ) {
+        const listaOpciones = document.createElement('option');
+        listaOpciones.value = vend.ID;
+        listaOpciones.text = vend.vendedor;
+        listaId.append(listaOpciones);
+    }
     
-    const divImpresion = document.getElementById("bodyDiv2");
-    const impresionInfo = document.createElement("ul");
-    const ventasJSON = localStorage.getItem('ventas');
-    const ventasStorage = JSON.parse(ventasJSON) || [];
-    const nombreStorage = localStorage.getItem('nombre') || null;
-    divImpresion.innerHTML = ""
-
-    nombreStorage == null ?
-    impresionInfo.innerHTML = "<h3> No hay info previa cargada </h3>"
-    : impresionInfo.innerHTML = `
-    <h2> ${ nombreStorage } tus resultados son: </h2>
-    <li> Dias trabajados: ${ventasStorage[0].dias} </li>
-    <li> Ventas concretadas: ${ventasStorage[0].ventas} </li>
-    ` 
-    divImpresion.append(impresionInfo)
 }
 
-pintarInfoInicial ()
-
-//sincronizo la info capturada en el storage
-function sincronizarStorage () {
-    localStorage.setItem('ventas', JSON.stringify(ventas) )
-    localStorage.setItem('nombre', nombre)
+function pantallaInicial () {
+    datosStorage = localStorage.getItem('datos') || null;
+    datosStorage == null ? borrarDatos() : cargarDatosIniciales();
+    function cargarDatosIniciales () {
+        imprimirInfo ();
+        imprimirObjetivo1();
+        imprimirObjetivo2();
+    }
 }
 
-function leerStorage () {
-    const ventasJSON = localStorage.getItem('ventas');
-    const ventasStorage = JSON.parse(ventasJSON);
-    console.log(ventasStorage);
+pantallaInicial();
+
+function borrarDatos () {
+    const divContainterInfo = document.getElementById('container-2-info');
+    const impresionInfo = document.createElement('li');
+    divContainterInfo.innerHTML = "";
+    impresionInfo.innerHTML = `
+    <h3>Infomacion general</h3>
+    <ul>Total de ventas: -</ul>
+    <ul>Promedio de ventas: -</ul>
+    <ul>Distribucion con Promo / sin Promo: -%/-%</ul>
+    <ul>Escala actual o la mas cercana: -</ul>
+    <ul>Comision actual o la mas cercana: -</ul>
+    `
+    divContainterInfo.append(impresionInfo);
+
+    const divContainterObjetivo1 = document.getElementById('container-2-objetivo-detalle1');
+    const impresionObjetivo1 = document.createElement('li');
+    divContainterObjetivo1.innerHTML = "";
+    impresionObjetivo1.innerHTML = `
+    <h3>Siguiente escala: -</h3>
+    <ul>Ventas para alcanzar proxima escala: -</ul>
+    <ul>Ventas diarias para proxima escala: -</ul>
+    <ul>Comision: -</ul>
+    <br>
+    <h3>20% extra para asegurar escala: -</h3>
+    <ul>Ventas para asegurar proxima escala: -</ul>
+    <ul>Ventas diarias para asegurar escala: -</ul>
+    <ul>Comision: -</ul>
+    `
+    divContainterObjetivo1.append(impresionObjetivo1);
+
+    const divContainterObjetivo2 = document.getElementById('container-2-objetivo-detalle2');
+    const impresionObjetivo2 = document.createElement('li');
+    divContainterObjetivo2.innerHTML = "";
+    impresionObjetivo2.innerHTML = `
+    <h3>Objetivo personal: -</h3>
+    <ul>Ventas para objetivo: -</ul>
+    <ul>Ventas diarias para objetivo: -</ul>
+    <ul>Comision: -</ul>
+    <br>
+    <h3>20% extra para asegurar objetivo: -</h3>
+    <ul>Ventas para asegurar objetivo: -</ul>
+    <ul>Ventas diarias para asegurar objetivo: -</ul>
+    <ul>Comision: -</ul>
+    `
+    divContainterObjetivo2.append(impresionObjetivo2);
+    localStorage.clear();
 }
 
-//capturo la info para plasmarla y a la vez guardarla en storage
-function capturarVentas () {
-    const diasTrabajados = document.getElementById("diasTrabajados").value;
-    const ventasConcretadas = document.getElementById("ventasConcretadas").value;
-    const nombreCapturado = document.getElementById("nombre").value;
-    nombre = nombreCapturado;
-    ventas.length = 0;
-    let venta = new Venta (diasTrabajados, ventasConcretadas);
-    ventas.push(venta);
-    sincronizarStorage ();
-    pintarInfo ();
+
+function cargarDatos () {
+    const nombre = document.getElementById("vendedor");
+    const sinPromo = document.getElementById("sinPromo").value;
+    const conPromo = document.getElementById("conPromo").value;
+    const diasRestantes = parseInt(document.getElementById("diasRestantes").value);
+    const objetivoPersonal = document.getElementById("objetivoPersonal").value;
+    let ventasTotal = parseInt(sinPromo) + parseInt(conPromo);
+    if (isNaN(sinPromo) ||  sinPromo <0 ||  isNaN(conPromo) || conPromo <0 || isNaN(diasRestantes) || diasRestantes <0 || isNaN(objetivoPersonal) || objetivoPersonal<ventasTotal) {
+        swal({
+            title: "Revisa los datos cargados",
+            text: "",
+            icon: "error",
+          });
+          pantallaInicial();
+          return;
+    }
+    
+    while(datos.length > 0){datos.pop()}
+    datos.push(nombre.value, sinPromo, conPromo, diasRestantes, objetivoPersonal);  
+    sincronizarStorage ();  
+    imprimirNombre();
+    imprimirInfo ();
+    imprimirObjetivo1();
+    imprimirObjetivo2();
     Toastify({
         text: "Datos actualizados",
         duration: 2000
     }).showToast();
-    
 }
 
 
-//pinto la info al darle click en actualizar
-function pintarInfo () {
-    const divImpresion = document.getElementById("bodyDiv2");
-    const impresionInfo = document.createElement("ul");
-    const [venta] = ventas;
-    const nombreStorage = localStorage.getItem('nombre');
-    divImpresion.innerHTML = ""
+function sincronizarStorage () {
+    localStorage.setItem('datos', JSON.stringify(datos));
+    localStorage.setItem('diasVigencia', diasVigencia);
+    localStorage.setItem('objetivo', JSON.stringify(objetivo))
+}
+
+function imprimirNombre () {
+    const divContainerNombre = document.getElementById('container-2-nombre');
+    const impresionNombre = document.createElement('h2');
+    divContainerNombre.innerHTML = "";
+    impresionNombre.innerHTML = `${datos[0]}`
+    divContainerNombre.append(impresionNombre);
+}
+
+function imprimirInfo () {
+    const datosStorage = JSON.parse(localStorage.getItem('datos'));
+    const diasVigencia = localStorage.getItem('diasVigencia');
+    const objetivoStorage = JSON.parse(localStorage.getItem('objetivo'));
+    ventasTotal = parseInt(datosStorage[1]) + parseInt(datosStorage[2]);
+    let promedio = (parseInt(datosStorage[1]) + parseInt(datosStorage[2])) / (parseInt(diasVigencia)-parseInt(datosStorage[3]));
+    let sinPromo = (parseInt(datosStorage[1])/(parseInt(datosStorage[1]) + parseInt(datosStorage[2])))*100;
+    let conPromo = (parseInt(datosStorage[2])/(parseInt(datosStorage[1]) + parseInt(datosStorage[2])))*100;
+    let escalaActual = (ventasTotal < objetivoStorage[0].escala) ? parseInt(objetivoStorage[0].escala) : (ventasTotal >= objetivoStorage[0].escala && ventasTotal < objetivoStorage[1].escala ) ? parseInt(objetivoStorage[0].escala) : (ventasTotal >= objetivoStorage[1].escala && ventasTotal < objetivoStorage[2].escala) ? parseInt(objetivoStorage[1].escala) : (ventasTotal >= objetivoStorage[2].escala && ventasTotal < objetivoStorage[3].escala) ? parseInt(objetivoStorage[2].escala) : ventasTotal;
+    let proxComision = (ventasTotal < objetivoStorage[0].escala) ? parseInt(objetivoStorage[0].comision) : (ventasTotal >= objetivoStorage[0].escala && ventasTotal < objetivoStorage[1].escala ) ? parseInt(objetivoStorage[0].comision) : (ventasTotal >= objetivoStorage[1].escala && ventasTotal < objetivoStorage[2].escala) ? parseInt(objetivoStorage[1].comision) : (ventasTotal >= objetivoStorage[2].escala && ventasTotal < objetivoStorage[3].escala) ? parseInt(objetivoStorage[2].comision) :  parseInt(objetivoStorage[3].comision);
+    const divContainterInfo = document.getElementById('container-2-info');
+    const impresionInfo = document.createElement('li');
+    divContainterInfo.innerHTML = "";
     impresionInfo.innerHTML = `
-    <h2> ${ nombre } tus resultados son: </h2>
-    <li> Dias trabajados: ${venta.dias} </li>
-    <li> Ventas concretadas: ${venta.ventas} </li>
+    <h3> Infomacion general</h3>
+    <ul>Total de ventas: ${ventasTotal}</ul>
+    <ul>Promedio de ventas: ${promedio.toFixed(2)}</ul>
+    <ul>Distribucion con Promo / sin Promo: ${sinPromo.toFixed()}%/${conPromo.toFixed()}%</ul>
+    <ul>Escala actual o la mas cercana: ${escalaActual}</ul>
+    <ul>Comision actual o la mas cercana: ${proxComision}</ul>
     `
+    divContainterInfo.append(impresionInfo);
+}
+
+
+function imprimirObjetivo1 () {
+    const datosStorage = JSON.parse(localStorage.getItem('datos'));
+    const objetivoStorage = JSON.parse(localStorage.getItem('objetivo'));
+    ventasTotal = parseInt(datosStorage[1]) + parseInt(datosStorage[2]);
+
+    let proxEscala = (ventasTotal < objetivoStorage[0].escala) ? parseInt(objetivoStorage[0].escala) : (ventasTotal >= objetivoStorage[0].escala && ventasTotal < objetivoStorage[1].escala ) ? parseInt(objetivoStorage[1].escala) : (ventasTotal >= objetivoStorage[1].escala && ventasTotal < objetivoStorage[2].escala) ? parseInt(objetivoStorage[2].escala) : (ventasTotal >= objetivoStorage[2].escala && ventasTotal < objetivoStorage[3].escala) ? parseInt(objetivoStorage[3].escala) : parseInt(datosStorage[4]);
+
+    let proxComision = (ventasTotal < objetivoStorage[0].escala) ? parseInt(objetivoStorage[0].comision) : (ventasTotal >= objetivoStorage[0].escala && ventasTotal < objetivoStorage[1].escala ) ? parseInt(objetivoStorage[1].comision) : (ventasTotal >= objetivoStorage[1].escala && ventasTotal < objetivoStorage[2].escala) ? parseInt(objetivoStorage[2].comision) : (ventasTotal >= objetivoStorage[2].escala && ventasTotal < objetivoStorage[3].escala) ? parseInt(objetivoStorage[3].comision) :  parseInt(objetivoStorage[3].comision + (datosStorage[4] - objetivoStorage[3].escala)*400)
+
+    let ventasFaltantesProxEscala = proxEscala - (parseInt(datosStorage[1]) +  parseInt(datosStorage[2]));
+    let ventasPorDiaProxEscala = parseFloat(ventasFaltantesProxEscala / parseInt(datosStorage[3]))
+    
+    const divContainterObjetivo1 = document.getElementById('container-2-objetivo-detalle1');
+    const impresionObjetivo1 = document.createElement('li');
+    divContainterObjetivo1.innerHTML = "";
+    impresionObjetivo1.innerHTML = `
+    <h3>Siguiente escala: ${proxEscala}</h3>
+    <ul>Ventas para alcanzar proxima escala: ${ventasFaltantesProxEscala}</ul>
+    <ul>Ventas diarias para proxima escala: ${ventasPorDiaProxEscala.toFixed(2)}</ul>
+    <ul>Comision: ${proxComision}</ul>
+    <br>
+    <h3>20% extra para asegurar escala: ${parseInt((proxEscala*1.2))}</h3>
+    <ul>Ventas para asegurar proxima escala: ${parseInt(((proxEscala*1.2)-ventasTotal))}</ul>
+    <ul>Ventas diarias para asegurar escala: ${(((proxEscala*1.2)-ventasTotal)/datosStorage[3]).toFixed(2)}</ul>
+    <ul>Comision: ${proxComision}</ul>
+    `
+    divContainterObjetivo1.append(impresionObjetivo1);
+}
+
+function imprimirObjetivo2 () {
+    const datosStorage = JSON.parse(localStorage.getItem('datos'));
+    const objetivoStorage = JSON.parse(localStorage.getItem('objetivo'));
+    ventasTotal = parseInt(datosStorage[1]) + parseInt(datosStorage[2]);
+    let proxEscala = (ventasTotal < objetivoStorage[0].escala) ? parseInt(objetivoStorage[0].escala) : (ventasTotal >= objetivoStorage[0].escala && ventasTotal < objetivoStorage[1].escala ) ? parseInt(objetivoStorage[1].escala) : (ventasTotal >= objetivoStorage[1].escala && ventasTotal < objetivoStorage[2].escala) ? parseInt(objetivoStorage[2].escala) : (ventasTotal >= objetivoStorage[2].escala && ventasTotal < objetivoStorage[3].escala) ? parseInt(objetivoStorage[3].escala) : parseInt(datosStorage[4]);
+    let ventasFaltantesProxEscala = parseInt(datosStorage[4]) - ventasTotal;
+    let ventasPorDiaProxEscala = parseFloat(ventasFaltantesProxEscala / datosStorage[3])
+    let objComision = (datosStorage[4] < objetivoStorage[0].escala) ? parseInt(objetivoStorage[0].comision) : (datosStorage[4] >= objetivoStorage[0].escala && datosStorage[4] < objetivoStorage[1].escala ) ? parseInt(objetivoStorage[0].comision) : (datosStorage[4] >= objetivoStorage[1].escala && datosStorage[4] < objetivoStorage[2].escala) ? parseInt(objetivoStorage[1].comision) : (datosStorage[4] >= objetivoStorage[2].escala && datosStorage[4] < objetivoStorage[3].escala) ? parseInt(objetivoStorage[2].comision) : parseInt(objetivoStorage[3].comision + (datosStorage[4] - objetivoStorage[3].escala)*400)
+
+    const divContainterObjetivo2 = document.getElementById('container-2-objetivo-detalle2');
+    const impresionObjetivo2 = document.createElement('li');
+    divContainterObjetivo2.innerHTML = "";
+    impresionObjetivo2.innerHTML = `
+    <h3>Objetivo personal: ${datosStorage[4]}</h3>
+    <ul>Ventas para objetivo: ${ventasFaltantesProxEscala}</ul>
+    <ul>Ventas diarias para objetivo: ${ventasPorDiaProxEscala.toFixed(2)}</ul>
+    <ul>Comision: ${objComision}</ul>
+    <br>
+    <h3>20% extra para asegurar objetivo: ${parseInt((datosStorage[4]*1.2))}</h3>
+    <ul>Ventas para asegurar objetivo: ${parseInt(((datosStorage[4]*1.2)-ventasTotal))}</ul>
+    <ul>Ventas diarias para asegurar objetivo: ${(((datosStorage[4]*1.2)-ventasTotal)/datosStorage[3]).toFixed(2)}</ul>
+    <ul>Comision: ${objComision}</ul>
+    `
+    divContainterObjetivo2.append(impresionObjetivo2);
 }
