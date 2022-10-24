@@ -8,12 +8,23 @@ botonCargarDatos.addEventListener ("click", () => {cargarDatos ()}  )
 const botonBorrarDatos = document.getElementById("BorrarTodo");
 botonBorrarDatos.addEventListener ("click", () => {borrarDatos ()}  )
 
-
-let activarFetch = async()=>{
-    let respuesta = await fetch("./JavaScript/data.json");
-    let respuestaData = await respuesta.json(); 
-}
 activarFetch();
+
+function activarFetch () {
+    fetch ('../../JavaScript/data.json') 
+        .then (res => res.json())
+        .then (data => {
+        diasVigenciaFetch(data);
+        objetivoFetch(data);
+        
+    })
+    fetch ('../../JavaScript/vendedor.json')
+        .then (res => res.json())
+        .then (vend => {
+        listaVendedores(vend);
+    })
+
+}
 
 function diasVigenciaFetch (data) {
     diasVigencia = data[0].diasVigencia;
