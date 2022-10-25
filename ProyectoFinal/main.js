@@ -8,23 +8,23 @@ botonCargarDatos.addEventListener ("click", () => {cargarDatos ()}  )
 const botonBorrarDatos = document.getElementById("BorrarTodo");
 botonBorrarDatos.addEventListener ("click", () => {borrarDatos ()}  )
 
-activarFetch();
-
 function activarFetch () {
-    fetch ('../../JavaScript/data.json') 
-        .then (res => res.json())
-        .then (data => {
+    fetch ('http://localhost/Javascript-Coder/ProyectoFinal/data.json')
+    .then (res => res.json())
+    .then (data => {
+        console.log(data)
         diasVigenciaFetch(data);
         objetivoFetch(data);
-        
     })
-    fetch ('../../JavaScript/vendedor.json')
-        .then (res => res.json())
-        .then (vend => {
+    fetch ('http://localhost/Javascript-Coder/ProyectoFinal/vendedor.json')
+    .then (res => res.json())
+    .then (vend => {
         listaVendedores(vend);
     })
-
+    
 }
+
+activarFetch();
 
 function diasVigenciaFetch (data) {
     diasVigencia = data[0].diasVigencia;
@@ -115,15 +115,6 @@ function cargarDatos () {
     const diasRestantes = parseInt(document.getElementById("diasRestantes").value);
     const objetivoPersonal = document.getElementById("objetivoPersonal").value;
     let ventasTotal = parseInt(sinPromo) + parseInt(conPromo);
-    if (isNaN(sinPromo) ||  sinPromo <0 ||  isNaN(conPromo) || conPromo <0 || isNaN(diasRestantes) || diasRestantes <0 || isNaN(objetivoPersonal) || objetivoPersonal<ventasTotal) {
-        swal({
-            title: "Revisa los datos cargados",
-            text: "",
-            icon: "error",
-          });
-          pantallaInicial();
-          return;
-    }
     
     while(datos.length > 0){datos.pop()}
     datos.push(nombre.value, sinPromo, conPromo, diasRestantes, objetivoPersonal);  
